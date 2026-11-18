@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a101a" />
+    <meta
+      name="description"
+      content="LEVELUP — jogos, pré-venda, consolas, trailers e páginas individuais."
+    />
+    <title>LEVELUP — Loja de jogos</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <button
+      id="chat-toggle"
+      class="chat-toggle"
+      type="button"
+      aria-controls="chat-panel"
+      aria-expanded="false"
+    >
+      <span class="chat-toggle-icon" aria-hidden="true">✦</span
+      ><span>LEVELUP Assistente</span>
+    </button>
+    <section
+      id="chat-panel"
+      class="chat-panel"
+      role="dialog"
+      aria-label="LEVELUP Assistente"
+      hidden
+    >
+      <header class="chat-header">
+        <div>
+          <strong>LEVELUP Assistente</strong
+          ><small>Ajuda com jogos e capas</small>
+        </div>
+        <button
+          id="chat-close"
+          class="chat-close"
+          type="button"
+          aria-label="Fechar o assistente"
+        >
+          ×
+        </button>
+      </header>
+      <div
+        id="chat-messages"
+        class="chat-messages"
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions text"
+      ></div>
+      <details class="chat-shipping" id="chat-shipping">
+        <summary>Calcular frete desde Guaratinguetá</summary>
+        <p class="shipping-note">
+          Informe o endereço e abra a rota no Google Maps. Copie a distância de
+          carro exibida e volte para calcular o frete. O endereço só é enviado
+          ao Maps se você clicar no link.
+        </p>
+        <form id="chat-shipping-form">
+          <label for="shipping-address">Endereço de entrega</label>
+          <input
+            id="shipping-address"
+            name="address"
+            type="text"
+            maxlength="180"
+            autocomplete="street-address"
+            placeholder="Rua, número, cidade e estado"
+            required
+          />
+          <a
+            id="shipping-maps-link"
+            class="botao botao-simples shipping-map-link"
+            href="https://www.google.com/maps/dir/?api=1&origin=Guaratinguet%C3%A1%2C%20SP&destination=Guaratinguet%C3%A1%2C%20SP&travelmode=driving"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Abrir rota no Google Maps ↗</a
+          >
+          <label for="shipping-distance">Distância rodoviária (km)</label>
+          <input
+            id="shipping-distance"
+            name="distance"
+            type="number"
+            inputmode="decimal"
+            min="0.1"
+            step="0.1"
+            placeholder="Ex.: 12,5"
+            required
+          />
+          <button class="botao botao-laranja" type="submit">
+            Calcular frete e total
+          </button>
+        </form>
+        <small class="shipping-attribution"
+          >Cálculo demonstrativo: R$ 4,00/km · limite de 100 km. O Maps é um
+          serviço externo.</small
+        >
+      </details>
+      <div id="chat-status" class="chat-status" role="status" hidden>
+        <span></span> <span id="chat-status-text"></span>
+      </div>
+      <div id="chat-preview" class="chat-preview" hidden>
+        <img
+          id="chat-preview-image"
+          alt="Pré-visualização da imagem selecionada"
+        />
+        <div>
+          <strong id="chat-preview-name"></strong
+          ><small>Imagem pronta para envio</small>
+        </div>
+        <button
+          id="chat-remove-image"
+          type="button"
+          aria-label="Remover imagem selecionada"
+        >
+          ×
+        </button>
+      </div>
+      <input
+        id="chat-file"
+        class="visually-hidden"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+      />
+      <div class="chat-controls">
+        <button
+          id="chat-select-image"
+          class="chat-image-button"
+          type="button"
+          aria-label="Selecionar uma imagem"
+        >
+          ＋ Imagem
+        </button>
+        <form id="chat-form" class="chat-form">
+          <input
+            id="chat-text"
+            type="text"
+            maxlength="500"
+            autocomplete="off"
+            placeholder="Escreva uma mensagem…"
+            aria-label="Mensagem para o assistente"
+          />
+          <button type="submit" aria-label="Enviar mensagem">Enviar</button>
+        </form>
+      </div>
+      <p class="chat-footnote">
+        As respostas usam o catálogo desta demonstração. A imagem não é enviada
+        para uma webcam nem para um servidor.
+      </p>
+    </section>
+    <script src="script.js"></script>
+  </body>
+</html>
