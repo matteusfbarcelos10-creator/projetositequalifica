@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a101a" />
+    <title>Entrar na administração · LEVELUP</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="admin-page">
+    <main class="admin-login-card">
+      <a class="marca" href="index.html">LEVEL<span>UP</span></a>
+      <p class="kicker">PAINEL DA LOJA</p>
+      <h1>Entrar</h1>
+      <p class="admin-lead">
+        Acesse a área administrativa para cadastrar e organizar os produtos.
+      </p>
+
+      <form id="login-form" class="admin-form">
+        <label for="login-user">Usuário</label>
+        <input
+          id="login-user"
+          name="username"
+          type="text"
+          autocomplete="username"
+          required
+        />
+        <label for="login-password">Senha</label>
+        <input
+          id="login-password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+        <button class="botao botao-laranja" type="submit">
+          Entrar no painel
+        </button>
+        <p
+          id="login-status"
+          class="admin-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+
+      <aside class="admin-demo-notice">
+        <strong>Acesso de demonstração</strong>
+        <span
+          >Usuário: <code>admin</code> · Senha: <code>levelup123</code></span
+        >
+        <span
+          >Este login é validado no navegador e não é seguro para uso em
+          produção.</span
+        >
+      </aside>
+      <a class="admin-back-link" href="index.html">← Voltar à loja</a>
+    </main>
+
+    <script>
+      // Credenciais apenas para demonstração local; não protegem um site publicado.
+      const DEMO_USER = "admin";
+      const DEMO_PASSWORD = "levelup123";
+
+      document
+        .querySelector("#login-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          const user = form.elements.username.value.trim();
+          const password = form.elements.password.value;
+          const status = document.querySelector("#login-status");
+
+          if (user === DEMO_USER && password === DEMO_PASSWORD) {
+            sessionStorage.setItem("levelup-admin-session", "demo");
+            window.location.href = "./admin.html";
+            return;
+          }
+
+          status.textContent =
+            "Usuário ou senha incorretos. Consulte os dados de demonstração abaixo.";
+          form.elements.password.value = "";
+          form.elements.password.focus();
+        });
+    </script>
+  </body>
+</html>

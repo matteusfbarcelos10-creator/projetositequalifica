@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a101a" />
+    <title>Administração de produtos · LEVELUP</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="admin-page">
+    <header class="admin-topbar">
+      <a class="marca" href="index.html">LEVEL<span>UP</span></a>
+      <div class="admin-topbar-actions">
+        <span class="admin-user-label">Painel administrativo</span>
+        <a class="botao botao-simples" href="index.html">Ver loja</a>
+        <button id="logout-button" class="botao botao-simples" type="button">
+          Sair
+        </button>
+      </div>
+    </header>
+
+    <main class="admin-shell">
+      <section class="admin-heading">
+        <p class="kicker">GESTÃO DA LOJA</p>
+        <h1>Produtos</h1>
+        <p class="admin-lead">
+          Cadastre produtos e mantenha o seu catálogo organizado.
+        </p>
+      </section>
+
+      <nav class="admin-tabs" aria-label="Seções de produtos">
+        <button
+          class="admin-tab is-active"
+          type="button"
+          data-tab="register"
+          aria-selected="true"
+        >
+          Cadastrar produtos
+        </button>
+        <button
+          class="admin-tab"
+          type="button"
+          data-tab="list"
+          aria-selected="false"
+        >
+          Produtos cadastrados
+          <span id="product-count" class="admin-count">0</span>
+        </button>
+      </nav>
+
+      <section id="panel-register" class="admin-panel" data-panel="register">
+        <div class="admin-panel-heading">
+          <div>
+            <p class="kicker">NOVO ITEM</p>
+            <h2 id="form-heading">Cadastrar produto</h2>
+          </div>
+          <button
+            id="cancel-edit"
+            class="botao botao-simples"
+            type="button"
+            hidden
+          >
+            Cancelar edição
+          </button>
+        </div>
+
+        <form id="product-form" class="product-form">
+          <input name="id" type="hidden" />
+          <label class="admin-field">
+            <span>Nome do produto *</span>
+            <input
+              name="name"
+              type="text"
+              maxlength="100"
+              placeholder="Ex.: Controle sem fio"
+              required
+            />
+          </label>
+          <label class="admin-field">
+            <span>Categoria *</span>
+            <select name="category" required>
+              <option value="">Selecione uma categoria</option>
+              <option>Jogo</option>
+              <option>Console</option>
+              <option>Acessório</option>
+              <option>Outro</option>
+            </select>
+          </label>
+          <label class="admin-field">
+            <span>Plataforma</span>
+            <input
+              name="platform"
+              type="text"
+              maxlength="100"
+              placeholder="Ex.: PS5, Xbox, PC"
+            />
+          </label>
+          <label class="admin-field">
+            <span>Preço (R$) *</span>
+            <input
+              name="price"
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="0,00"
+              required
+            />
+          </label>
+          <label class="admin-field">
+            <span>Estoque</span>
+            <input name="stock" type="number" min="0" step="1" value="0" />
+          </label>
+          <label class="admin-field admin-field-wide">
+            <span>URL da imagem</span>
+            <input
+              name="image"
+              type="url"
+              maxlength="1000"
+              placeholder="https://exemplo.com/imagem.jpg"
+            />
+          </label>
+          <label class="admin-field">
+            <span>Link do trailer no YouTube</span>
+            <input
+              name="trailer"
+              type="url"
+              maxlength="1000"
+              placeholder="Opcional"
+            />
+          </label>
+          <label class="admin-field">
+            <span>Link da página / fonte</span>
+            <input
+              name="source"
+              type="url"
+              maxlength="1000"
+              placeholder="Opcional"
+            />
+          </label>
+          <label class="admin-field admin-field-wide">
+            <span>Descrição</span>
+            <textarea
+              name="description"
+              rows="4"
+              maxlength="500"
+              placeholder="Descrição breve do produto"
+            ></textarea>
+          </label>
+          <div class="admin-form-actions admin-field-wide">
+            <button id="save-product" class="botao botao-laranja" type="submit">
+              Salvar produto
+            </button>
+            <button id="clear-form" class="botao botao-simples" type="button">
+              Limpar campos
+            </button>
+          </div>
+          <p
+            id="product-status"
+            class="admin-status admin-field-wide"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </form>
+      </section>
+
+      <section id="panel-list" class="admin-panel" data-panel="list" hidden>
+        <div class="admin-panel-heading admin-list-heading">
+          <div>
+            <p class="kicker">CATÁLOGO</p>
+            <h2>Produtos cadastrados</h2>
+          </div>
+          <label class="admin-search">
+            <span class="visually-hidden">Pesquisar produtos</span>
+            <input
+              id="product-search"
+              type="search"
+              placeholder="Pesquisar produto…"
+            />
+          </label>
+        </div>
+        <p id="empty-products" class="admin-empty">
+          Ainda não há produtos cadastrados. Use a aba “Cadastrar produtos” para
+          adicionar o primeiro.
+        </p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">Produto</th>
+                <th scope="col">Categoria / plataforma</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Estoque</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="product-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="admin-demo-notice admin-security-note">
+        <strong>Observação sobre esta versão</strong>
+        <span
+          >Os produtos são salvos no armazenamento local deste navegador. O
+          login também é apenas demonstrativo; não use estas páginas como
+          segurança de uma loja publicada. Para produção, use backend, banco de
+          dados e autenticação no servidor.</span
+        >
+      </aside>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "levelup-admin-produtos";
+      const SESSION_KEY = "levelup-admin-session";
+      const form = document.querySelector("#product-form");
+      const rows = document.querySelector("#product-rows");
+      const status = document.querySelector("#product-status");
+      const count = document.querySelector("#product-count");
+      const emptyState = document.querySelector("#empty-products");
+      const searchInput = document.querySelector("#product-search");
+      const panels = [...document.querySelectorAll("[data-panel]")];
+      const tabs = [...document.querySelectorAll("[data-tab]")];
+
+      if (sessionStorage.getItem(SESSION_KEY) !== "demo") {
+        window.location.replace("login.html");
+      }
+
+      function loadProducts() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(data) ? data : [];
+        } catch {
+          return [];
+        }
+      }
+
+      let products = loadProducts();
+
+      function saveProducts() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+          return true;
+        } catch {
+          status.textContent =
+            "Não foi possível salvar. Verifique o armazenamento disponível no navegador.";
+          return false;
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(
+          /[&<>"']/g,
+          (character) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[character],
+        );
+      }
+
+      function formatPrice(value) {
+        return Number(value).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
+
+      function renderProducts() {
+        const term = searchInput.value.trim().toLocaleLowerCase("pt-BR");
+        const visibleProducts = products.filter((product) =>
+          `${product.name} ${product.category} ${product.platform}`
+            .toLocaleLowerCase("pt-BR")
+            .includes(term),
+        );
+
+        count.textContent = String(products.length);
+        emptyState.hidden = products.length > 0;
+        rows.innerHTML = visibleProducts
+          .map(
+            (product) => `
+          <tr>
+            <td><div class="admin-product-cell">${product.image ? `<img src="${escapeHtml(product.image)}" alt="" loading="lazy">` : `<span class="admin-image-placeholder" aria-hidden="true">LV</span>`}<div><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.description || "Sem descrição")}</small></div></div></td>
+            <td>${escapeHtml(product.category)}<small class="admin-cell-subtext">${escapeHtml(product.platform || "Plataforma não informada")}</small></td>
+            <td>${formatPrice(product.price)}</td>
+            <td>${Number(product.stock) || 0}</td>
+            <td><div class="admin-row-actions"><button class="admin-action" type="button" data-edit="${escapeHtml(product.id)}">Editar</button><button class="admin-action is-danger" type="button" data-delete="${escapeHtml(product.id)}">Excluir</button></div></td>
+          </tr>`,
+          )
+          .join("");
+
+        if (products.length && !visibleProducts.length) {
+          emptyState.hidden = false;
+          emptyState.textContent = "Nenhum produto corresponde à pesquisa.";
+        } else {
+          emptyState.textContent =
+            "Ainda não há produtos cadastrados. Use a aba “Cadastrar produtos” para adicionar o primeiro.";
+        }
+      }
+
+      function selectTab(name) {
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.panel !== name;
+        });
+        tabs.forEach((tab) => {
+          const active = tab.dataset.tab === name;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", String(active));
+        });
+      }
+
+      function resetForm() {
+        form.reset();
+        form.elements.id.value = "";
+        form.elements.stock.value = "0";
+        document.querySelector("#form-heading").textContent =
+          "Cadastrar produto";
+        document.querySelector("#save-product").textContent = "Salvar produto";
+        document.querySelector("#cancel-edit").hidden = true;
+      }
+
+      function makeId() {
+        return (
+          globalThis.crypto?.randomUUID?.() ||
+          `produto-${Date.now()}-${Math.random().toString(16).slice(2)}`
+        );
+      }
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+
+        const values = new FormData(form);
+        const id = String(values.get("id") || "");
+        const optionalUrls = ["image", "trailer", "source"]
+          .map((key) => String(values.get(key) || "").trim())
+          .filter(Boolean);
+        const validUrls = optionalUrls.every((value) => {
+          try {
+            const url = new URL(value);
+            return url.protocol === "http:" || url.protocol === "https:";
+          } catch {
+            return false;
+          }
+        });
+        if (!validUrls) {
+          status.textContent =
+            "Use URLs completas iniciadas por http:// ou https://.";
+          return;
+        }
+
+        const product = {
+          id: id || makeId(),
+          name: String(values.get("name")).trim(),
+          category: String(values.get("category")),
+          platform: String(values.get("platform") || "").trim(),
+          price: Number(values.get("price")),
+          stock: Math.max(0, Number(values.get("stock")) || 0),
+          image: String(values.get("image") || "").trim(),
+          trailer: String(values.get("trailer") || "").trim(),
+          source: String(values.get("source") || "").trim(),
+          description: String(values.get("description") || "").trim(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        const existingIndex = products.findIndex((item) => item.id === id);
+        if (existingIndex >= 0) {
+          products[existingIndex] = product;
+        } else {
+          products.unshift(product);
+        }
+
+        if (!saveProducts()) return;
+        renderProducts();
+        resetForm();
+        status.textContent =
+          existingIndex >= 0 ? "Produto atualizado." : "Produto cadastrado.";
+      });
+
+      rows.addEventListener("click", (event) => {
+        const editButton = event.target.closest("[data-edit]");
+        const deleteButton = event.target.closest("[data-delete]");
+
+        if (editButton) {
+          const product = products.find(
+            (item) => item.id === editButton.dataset.edit,
+          );
+          if (!product) return;
+          form.elements.id.value = product.id;
+          form.elements.name.value = product.name;
+          form.elements.category.value = product.category;
+          form.elements.platform.value = product.platform;
+          form.elements.price.value = product.price;
+          form.elements.stock.value = product.stock;
+          form.elements.image.value = product.image;
+          form.elements.trailer.value = product.trailer || "";
+          form.elements.source.value = product.source || "";
+          form.elements.description.value = product.description;
+          document.querySelector("#form-heading").textContent =
+            "Editar produto";
+          document.querySelector("#save-product").textContent =
+            "Salvar alterações";
+          document.querySelector("#cancel-edit").hidden = false;
+          status.textContent = `Editando: ${product.name}`;
+          selectTab("register");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        if (deleteButton) {
+          const product = products.find(
+            (item) => item.id === deleteButton.dataset.delete,
+          );
+          if (!product || !window.confirm(`Excluir “${product.name}”?`)) return;
+          products = products.filter((item) => item.id !== product.id);
+          if (saveProducts()) {
+            renderProducts();
+            status.textContent = "Produto excluído.";
+          }
+        }
+      });
+
+      tabs.forEach((tab) =>
+        tab.addEventListener("click", () => selectTab(tab.dataset.tab)),
+      );
+      searchInput.addEventListener("input", renderProducts);
+      document
+        .querySelector("#cancel-edit")
+        .addEventListener("click", resetForm);
+      document.querySelector("#clear-form").addEventListener("click", () => {
+        resetForm();
+        status.textContent = "Campos limpos.";
+      });
+      document.querySelector("#logout-button").addEventListener("click", () => {
+        sessionStorage.removeItem(SESSION_KEY);
+        window.location.href = "login.html";
+      });
+
+      renderProducts();
+    </script>
+  </body>
+</html>
